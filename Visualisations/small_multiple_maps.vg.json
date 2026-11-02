@@ -1,0 +1,1024 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Chart 5 (map 1). Each state's participation compared with Australia's average, one map per activity, on one shared scale (half to double). Hover a state to find it on every map.",
+  "params": [
+    {
+      "name": "hover",
+      "select": {
+        "type": "point",
+        "on": "mouseover",
+        "clear": "mouseout",
+        "fields": [
+          "state_name"
+        ]
+      },
+      "views": [
+        "map_walking_recreational",
+        "map_bush_walking",
+        "map_cycling",
+        "map_mountain_biking"
+      ]
+    }
+  ],
+  "columns": 4,
+  "spacing": 20,
+  "concat": [
+    {
+      "width": 240,
+      "height": 206,
+      "title": {
+        "text": [
+          "Walking for fun",
+          "Australia 50.2%"
+        ],
+        "fontSize": 12,
+        "lineHeight": 15
+      },
+      "projection": {
+        "type": "conicEqualArea",
+        "parallels": [
+          -18,
+          -36
+        ],
+        "rotate": [
+          -132,
+          0
+        ]
+      },
+      "layer": [
+        {
+          "name": "map_walking_recreational",
+          "data": {
+            "url": "Data/aus_states.topojson",
+            "format": {
+              "type": "topojson",
+              "feature": "states"
+            }
+          },
+          "transform": [
+            {
+              "calculate": "datum.properties.STATE_NAME",
+              "as": "state_name"
+            },
+            {
+              "lookup": "state_name",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "state",
+                  "walking_recreational",
+                  "walking_recreational_caution"
+                ]
+              }
+            },
+            {
+              "calculate": "'Australia'",
+              "as": "country"
+            },
+            {
+              "lookup": "country",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "walking_recreational"
+                ]
+              },
+              "as": [
+                "national"
+              ]
+            },
+            {
+              "calculate": "toNumber(datum['walking_recreational'])",
+              "as": "percent"
+            },
+            {
+              "calculate": "datum.percent / toNumber(datum.national)",
+              "as": "ratio"
+            }
+          ],
+          "mark": {
+            "type": "geoshape",
+            "stroke": "#5A6067",
+            "strokeWidth": 0.4
+          },
+          "encoding": {
+            "color": {
+              "field": "ratio",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0.5,
+                  1,
+                  2
+                ],
+                "range": [
+                  "#e8e7f3",
+                  "#9e9bcb",
+                  "#383869"
+                ],
+                "interpolate": "rgb",
+                "clamp": true
+              },
+              "legend": {
+                "orient": "bottom",
+                "direction": "horizontal",
+                "title": null,
+                "gradientLength": 110,
+                "gradientThickness": 8,
+                "values": [
+                  0.5,
+                  1,
+                  2
+                ],
+                "labelExpr": "datum.value == 0.5 ? 'half' : datum.value == 1 ? 'average' : 'double'"
+              }
+            },
+            "opacity": {
+              "condition": {
+                "param": "hover",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.3
+            },
+            "tooltip": [
+              {
+                "field": "state_name",
+                "title": "State"
+              },
+              {
+                "field": "percent",
+                "title": "Walking for fun (%)",
+                "format": ".1f"
+              },
+              {
+                "field": "ratio",
+                "title": "× Australia's average",
+                "format": ".2f"
+              }
+            ]
+          }
+        },
+        {
+          "data": {
+            "url": "Data/states.csv",
+            "format": {
+              "type": "csv",
+              "parse": {
+                "label_lon": "number",
+                "label_lat": "number"
+              }
+            }
+          },
+          "transform": [
+            {
+              "lookup": "state_name",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "state",
+                  "walking_recreational",
+                  "walking_recreational_caution"
+                ]
+              }
+            },
+            {
+              "calculate": "'Australia'",
+              "as": "country"
+            },
+            {
+              "lookup": "country",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "walking_recreational"
+                ]
+              },
+              "as": [
+                "national"
+              ]
+            },
+            {
+              "calculate": "toNumber(datum['walking_recreational'])",
+              "as": "percent"
+            },
+            {
+              "calculate": "datum.percent / toNumber(datum.national)",
+              "as": "ratio"
+            },
+            {
+              "calculate": "format(datum.percent, '.1f') + (datum['walking_recreational_caution'] == 'yes' ? '*' : '')",
+              "as": "label"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "fontWeight": 600
+          },
+          "encoding": {
+            "longitude": {
+              "field": "label_lon"
+            },
+            "latitude": {
+              "field": "label_lat"
+            },
+            "text": {
+              "field": "label"
+            },
+            "color": {
+              "condition": {
+                "test": "datum.ratio > 1.4 && datum.state != 'ACT' && datum.state != 'TAS'",
+                "value": "#FFFFFF"
+              },
+              "value": "#1D2125"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "width": 240,
+      "height": 206,
+      "title": {
+        "text": [
+          "Bushwalking",
+          "Australia 17.5%"
+        ],
+        "fontSize": 12,
+        "lineHeight": 15
+      },
+      "projection": {
+        "type": "conicEqualArea",
+        "parallels": [
+          -18,
+          -36
+        ],
+        "rotate": [
+          -132,
+          0
+        ]
+      },
+      "layer": [
+        {
+          "name": "map_bush_walking",
+          "data": {
+            "url": "Data/aus_states.topojson",
+            "format": {
+              "type": "topojson",
+              "feature": "states"
+            }
+          },
+          "transform": [
+            {
+              "calculate": "datum.properties.STATE_NAME",
+              "as": "state_name"
+            },
+            {
+              "lookup": "state_name",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "state",
+                  "bush_walking",
+                  "bush_walking_caution"
+                ]
+              }
+            },
+            {
+              "calculate": "'Australia'",
+              "as": "country"
+            },
+            {
+              "lookup": "country",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "bush_walking"
+                ]
+              },
+              "as": [
+                "national"
+              ]
+            },
+            {
+              "calculate": "toNumber(datum['bush_walking'])",
+              "as": "percent"
+            },
+            {
+              "calculate": "datum.percent / toNumber(datum.national)",
+              "as": "ratio"
+            }
+          ],
+          "mark": {
+            "type": "geoshape",
+            "stroke": "#5A6067",
+            "strokeWidth": 0.4
+          },
+          "encoding": {
+            "color": {
+              "field": "ratio",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0.5,
+                  1,
+                  2
+                ],
+                "range": [
+                  "#e4ece8",
+                  "#8dae9e",
+                  "#274a3c"
+                ],
+                "interpolate": "rgb",
+                "clamp": true
+              },
+              "legend": {
+                "orient": "bottom",
+                "direction": "horizontal",
+                "title": null,
+                "gradientLength": 110,
+                "gradientThickness": 8,
+                "values": [
+                  0.5,
+                  1,
+                  2
+                ],
+                "labelExpr": "datum.value == 0.5 ? 'half' : datum.value == 1 ? 'average' : 'double'"
+              }
+            },
+            "opacity": {
+              "condition": {
+                "param": "hover",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.3
+            },
+            "tooltip": [
+              {
+                "field": "state_name",
+                "title": "State"
+              },
+              {
+                "field": "percent",
+                "title": "Bushwalking (%)",
+                "format": ".1f"
+              },
+              {
+                "field": "ratio",
+                "title": "× Australia's average",
+                "format": ".2f"
+              }
+            ]
+          }
+        },
+        {
+          "data": {
+            "url": "Data/states.csv",
+            "format": {
+              "type": "csv",
+              "parse": {
+                "label_lon": "number",
+                "label_lat": "number"
+              }
+            }
+          },
+          "transform": [
+            {
+              "lookup": "state_name",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "state",
+                  "bush_walking",
+                  "bush_walking_caution"
+                ]
+              }
+            },
+            {
+              "calculate": "'Australia'",
+              "as": "country"
+            },
+            {
+              "lookup": "country",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "bush_walking"
+                ]
+              },
+              "as": [
+                "national"
+              ]
+            },
+            {
+              "calculate": "toNumber(datum['bush_walking'])",
+              "as": "percent"
+            },
+            {
+              "calculate": "datum.percent / toNumber(datum.national)",
+              "as": "ratio"
+            },
+            {
+              "calculate": "format(datum.percent, '.1f') + (datum['bush_walking_caution'] == 'yes' ? '*' : '')",
+              "as": "label"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "fontWeight": 600
+          },
+          "encoding": {
+            "longitude": {
+              "field": "label_lon"
+            },
+            "latitude": {
+              "field": "label_lat"
+            },
+            "text": {
+              "field": "label"
+            },
+            "color": {
+              "condition": {
+                "test": "datum.ratio > 1.4 && datum.state != 'ACT' && datum.state != 'TAS'",
+                "value": "#FFFFFF"
+              },
+              "value": "#1D2125"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "width": 240,
+      "height": 206,
+      "title": {
+        "text": [
+          "Cycling",
+          "Australia 8.3%"
+        ],
+        "fontSize": 12,
+        "lineHeight": 15
+      },
+      "projection": {
+        "type": "conicEqualArea",
+        "parallels": [
+          -18,
+          -36
+        ],
+        "rotate": [
+          -132,
+          0
+        ]
+      },
+      "layer": [
+        {
+          "name": "map_cycling",
+          "data": {
+            "url": "Data/aus_states.topojson",
+            "format": {
+              "type": "topojson",
+              "feature": "states"
+            }
+          },
+          "transform": [
+            {
+              "calculate": "datum.properties.STATE_NAME",
+              "as": "state_name"
+            },
+            {
+              "lookup": "state_name",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "state",
+                  "cycling",
+                  "cycling_caution"
+                ]
+              }
+            },
+            {
+              "calculate": "'Australia'",
+              "as": "country"
+            },
+            {
+              "lookup": "country",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "cycling"
+                ]
+              },
+              "as": [
+                "national"
+              ]
+            },
+            {
+              "calculate": "toNumber(datum['cycling'])",
+              "as": "percent"
+            },
+            {
+              "calculate": "datum.percent / toNumber(datum.national)",
+              "as": "ratio"
+            }
+          ],
+          "mark": {
+            "type": "geoshape",
+            "stroke": "#5A6067",
+            "strokeWidth": 0.4
+          },
+          "encoding": {
+            "color": {
+              "field": "ratio",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0.5,
+                  1,
+                  2
+                ],
+                "range": [
+                  "#e4ecf1",
+                  "#8caec4",
+                  "#264a62"
+                ],
+                "interpolate": "rgb",
+                "clamp": true
+              },
+              "legend": {
+                "orient": "bottom",
+                "direction": "horizontal",
+                "title": null,
+                "gradientLength": 110,
+                "gradientThickness": 8,
+                "values": [
+                  0.5,
+                  1,
+                  2
+                ],
+                "labelExpr": "datum.value == 0.5 ? 'half' : datum.value == 1 ? 'average' : 'double'"
+              }
+            },
+            "opacity": {
+              "condition": {
+                "param": "hover",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.3
+            },
+            "tooltip": [
+              {
+                "field": "state_name",
+                "title": "State"
+              },
+              {
+                "field": "percent",
+                "title": "Cycling (%)",
+                "format": ".1f"
+              },
+              {
+                "field": "ratio",
+                "title": "× Australia's average",
+                "format": ".2f"
+              }
+            ]
+          }
+        },
+        {
+          "data": {
+            "url": "Data/states.csv",
+            "format": {
+              "type": "csv",
+              "parse": {
+                "label_lon": "number",
+                "label_lat": "number"
+              }
+            }
+          },
+          "transform": [
+            {
+              "lookup": "state_name",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "state",
+                  "cycling",
+                  "cycling_caution"
+                ]
+              }
+            },
+            {
+              "calculate": "'Australia'",
+              "as": "country"
+            },
+            {
+              "lookup": "country",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "cycling"
+                ]
+              },
+              "as": [
+                "national"
+              ]
+            },
+            {
+              "calculate": "toNumber(datum['cycling'])",
+              "as": "percent"
+            },
+            {
+              "calculate": "datum.percent / toNumber(datum.national)",
+              "as": "ratio"
+            },
+            {
+              "calculate": "format(datum.percent, '.1f') + (datum['cycling_caution'] == 'yes' ? '*' : '')",
+              "as": "label"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "fontWeight": 600
+          },
+          "encoding": {
+            "longitude": {
+              "field": "label_lon"
+            },
+            "latitude": {
+              "field": "label_lat"
+            },
+            "text": {
+              "field": "label"
+            },
+            "color": {
+              "condition": {
+                "test": "datum.ratio > 1.4 && datum.state != 'ACT' && datum.state != 'TAS'",
+                "value": "#FFFFFF"
+              },
+              "value": "#1D2125"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "width": 240,
+      "height": 206,
+      "title": {
+        "text": [
+          "Mountain biking",
+          "Australia 0.7%"
+        ],
+        "fontSize": 12,
+        "lineHeight": 15
+      },
+      "projection": {
+        "type": "conicEqualArea",
+        "parallels": [
+          -18,
+          -36
+        ],
+        "rotate": [
+          -132,
+          0
+        ]
+      },
+      "layer": [
+        {
+          "name": "map_mountain_biking",
+          "data": {
+            "url": "Data/aus_states.topojson",
+            "format": {
+              "type": "topojson",
+              "feature": "states"
+            }
+          },
+          "transform": [
+            {
+              "calculate": "datum.properties.STATE_NAME",
+              "as": "state_name"
+            },
+            {
+              "lookup": "state_name",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "state",
+                  "mountain_biking",
+                  "mountain_biking_caution"
+                ]
+              }
+            },
+            {
+              "calculate": "'Australia'",
+              "as": "country"
+            },
+            {
+              "lookup": "country",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "mountain_biking"
+                ]
+              },
+              "as": [
+                "national"
+              ]
+            },
+            {
+              "calculate": "toNumber(datum['mountain_biking'])",
+              "as": "percent"
+            },
+            {
+              "calculate": "datum.percent / toNumber(datum.national)",
+              "as": "ratio"
+            }
+          ],
+          "mark": {
+            "type": "geoshape",
+            "stroke": "#5A6067",
+            "strokeWidth": 0.4
+          },
+          "encoding": {
+            "color": {
+              "field": "ratio",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0.5,
+                  1,
+                  2
+                ],
+                "range": [
+                  "#f0e6ec",
+                  "#c193af",
+                  "#5b2f4d"
+                ],
+                "interpolate": "rgb",
+                "clamp": true
+              },
+              "legend": {
+                "orient": "bottom",
+                "direction": "horizontal",
+                "title": null,
+                "gradientLength": 110,
+                "gradientThickness": 8,
+                "values": [
+                  0.5,
+                  1,
+                  2
+                ],
+                "labelExpr": "datum.value == 0.5 ? 'half' : datum.value == 1 ? 'average' : 'double'"
+              }
+            },
+            "opacity": {
+              "condition": {
+                "param": "hover",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.3
+            },
+            "tooltip": [
+              {
+                "field": "state_name",
+                "title": "State"
+              },
+              {
+                "field": "percent",
+                "title": "Mountain biking (%)",
+                "format": ".1f"
+              },
+              {
+                "field": "ratio",
+                "title": "× Australia's average",
+                "format": ".2f"
+              }
+            ]
+          }
+        },
+        {
+          "data": {
+            "url": "Data/states.csv",
+            "format": {
+              "type": "csv",
+              "parse": {
+                "label_lon": "number",
+                "label_lat": "number"
+              }
+            }
+          },
+          "transform": [
+            {
+              "lookup": "state_name",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "state",
+                  "mountain_biking",
+                  "mountain_biking_caution"
+                ]
+              }
+            },
+            {
+              "calculate": "'Australia'",
+              "as": "country"
+            },
+            {
+              "lookup": "country",
+              "from": {
+                "data": {
+                  "url": "Data/ausplay_state_2025.csv",
+                  "format": {
+                    "type": "csv"
+                  }
+                },
+                "key": "state_name",
+                "fields": [
+                  "mountain_biking"
+                ]
+              },
+              "as": [
+                "national"
+              ]
+            },
+            {
+              "calculate": "toNumber(datum['mountain_biking'])",
+              "as": "percent"
+            },
+            {
+              "calculate": "datum.percent / toNumber(datum.national)",
+              "as": "ratio"
+            },
+            {
+              "calculate": "format(datum.percent, '.1f') + (datum['mountain_biking_caution'] == 'yes' ? '*' : '')",
+              "as": "label"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "fontWeight": 600
+          },
+          "encoding": {
+            "longitude": {
+              "field": "label_lon"
+            },
+            "latitude": {
+              "field": "label_lat"
+            },
+            "text": {
+              "field": "label"
+            },
+            "color": {
+              "condition": {
+                "test": "datum.ratio > 1.4 && datum.state != 'ACT' && datum.state != 'TAS'",
+                "value": "#FFFFFF"
+              },
+              "value": "#1D2125"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "color": "independent"
+    }
+  },
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

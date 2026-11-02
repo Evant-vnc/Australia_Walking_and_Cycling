@@ -1,0 +1,288 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Chart 3. Participation by sex for four activities (filled = men, hollow = women).",
+  "width": "container",
+  "height": 230,
+  "data": {
+    "url": "Data/ausplay_national_2025.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "percent": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "filter": "datum.breakdown == 'Sex'"
+    },
+    {
+      "calculate": "{'Walking (Recreational)': 'Walking for fun', 'Bush walking': 'Bushwalking', 'Cycling': 'Cycling', 'Mountain biking': 'Mountain biking'}[datum.activity]",
+      "as": "activity_label"
+    }
+  ],
+  "encoding": {
+    "y": {
+      "field": "activity_label",
+      "type": "nominal",
+      "sort": [
+        "Walking for fun",
+        "Bushwalking",
+        "Cycling",
+        "Mountain biking"
+      ],
+      "title": null,
+      "axis": {
+        "domain": false,
+        "ticks": false
+      }
+    },
+    "x": {
+      "field": "percent",
+      "type": "quantitative",
+      "title": "% of adults",
+      "scale": {
+        "domain": [
+          0,
+          68
+        ],
+        "nice": false
+      },
+      "axis": {
+        "values": [
+          0,
+          20,
+          40,
+          60
+        ]
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 3
+      },
+      "encoding": {
+        "x": {
+          "aggregate": "min",
+          "field": "percent"
+        },
+        "x2": {
+          "aggregate": "max",
+          "field": "percent"
+        },
+        "color": {
+          "field": "activity",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Walking (Recreational)",
+              "Bush walking",
+              "Cycling",
+              "Mountain biking"
+            ],
+            "range": [
+              "#4E4AA0",
+              "#2F6B4F",
+              "#2E6C93",
+              "#8E3B6E"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.group == 'Male'"
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "size": 110,
+        "opacity": 1,
+        "color": "#1D2125"
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "activity_label",
+            "title": "Activity"
+          },
+          {
+            "field": "group",
+            "title": "Sex"
+          },
+          {
+            "field": "percent",
+            "title": "% of adults",
+            "format": ".1f"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.group == 'Female'"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "size": 110,
+        "filled": true,
+        "fill": "#FFFFFF",
+        "stroke": "#1D2125",
+        "strokeWidth": 2,
+        "opacity": 1
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "activity_label",
+            "title": "Activity"
+          },
+          {
+            "field": "group",
+            "title": "Sex"
+          },
+          {
+            "field": "percent",
+            "title": "% of adults",
+            "format": ".1f"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.activity != 'Mountain biking'"
+        },
+        {
+          "joinaggregate": [
+            {
+              "op": "min",
+              "field": "percent",
+              "as": "low"
+            }
+          ],
+          "groupby": [
+            "activity"
+          ]
+        },
+        {
+          "filter": "datum.percent == datum.low"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -10
+      },
+      "encoding": {
+        "text": {
+          "field": "percent",
+          "format": ".1f"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.activity != 'Mountain biking'"
+        },
+        {
+          "joinaggregate": [
+            {
+              "op": "max",
+              "field": "percent",
+              "as": "high"
+            }
+          ],
+          "groupby": [
+            "activity"
+          ]
+        },
+        {
+          "filter": "datum.percent == datum.high"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 10
+      },
+      "encoding": {
+        "text": {
+          "field": "percent",
+          "format": ".1f"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "activity_label": "Mountain biking",
+            "percent": 4.5,
+            "label": "men 1.2 · women 0.3"
+          }
+        ]
+      },
+      "transform": [],
+      "mark": {
+        "type": "text",
+        "align": "left"
+      },
+      "encoding": {
+        "text": {
+          "field": "label"
+        }
+      }
+    }
+  ],
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

@@ -1,0 +1,117 @@
+/* Trails and the people who use them: page styles
+   Layout: one grid of two equal columns inside a 1120px wrap. Charts sit on the page (no boxes);
+   white space separates the chapters. Paired panels share rows (label, title, legend, chart, note, source)
+   so their titles and charts line up. Every chart with a left axis keeps a 150px label area, so the
+   plot areas share one sight line.
+   Colour: one hue per meaning. Walking tracks and bushwalking green, rail trails rust, walking for fun indigo,
+   cycling blue, mountain biking berry, multi-use slate. Gold is only used to highlight. */
+
+:root {
+  --bg: #FFFFFF; --ink: #1D2125; --muted: #5A6067; --line: #E1E2DF; --base: #ECECE9;
+  --hero: #1F2B34; --hero-ink: #F3F5F6; --hero-muted: #B8C2C9;
+  --walk: #2F6B4F; --rail: #A0522D; --cycle: #2E6C93; --mtb: #8E3B6E; --multi: #5E6E7A; --fun: #4E4AA0;
+  --hi: #C98A12; --hi-soft: #F6E7C4;
+  --display: "Zilla Slab", Rockwell, Georgia, serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, monospace;
+  --gap: 56px; --measure: 50ch;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 1.0625rem; line-height: 1.6; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); padding-block: 0 96px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.15; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+a { color: var(--cycle); }
+a:focus-visible, select:focus-visible { outline: 3px solid var(--hi); outline-offset: 2px; }
+.measure { max-width: var(--measure); }
+.g2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
+
+/* coloured key words in the text (same colours as the charts) */
+.k-walk { color: var(--walk); font-weight: 700; }
+.k-rail { color: var(--rail); font-weight: 700; }
+.k-cycle { color: var(--cycle); font-weight: 700; }
+.k-mtb { color: var(--mtb); font-weight: 700; }
+.k-fun { color: var(--fun); font-weight: 700; }
+.k-hi { background: var(--hi-soft); box-shadow: 0 0 0 2px var(--hi-soft); border-radius: 2px; font-weight: 600; }
+.diamond { display: inline-block; width: .6em; height: .6em; background: var(--hi); transform: rotate(45deg); margin-right: .5em; vertical-align: .06em; }
+
+/* header */
+.hero { padding-block: 80px 64px; align-items: end; background: var(--hero); color: var(--hero-ink);
+        box-shadow: 0 0 0 100vmax var(--hero); clip-path: inset(0 -100vmax); }
+.eyebrow, .chap-label, .what { font-family: var(--mono); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.hero .eyebrow, .hero .lede, .hero .defn, .stat span, .stat small { color: var(--hero-muted); }
+.hero h1 { font-size: clamp(2.3rem, 5.2vw, 3.8rem); margin-top: 12px; }
+.hero .lede { margin-top: 20px; font-size: 1.15rem; }
+.defn { margin-top: 20px; font-size: .95rem; border-left: 3px solid var(--hi); padding-left: 12px; }
+.defn b { color: var(--hero-ink); }
+.stats { display: grid; row-gap: 16px; }
+.stat { display: grid; grid-template-columns: 7.4rem minmax(0, 1fr); column-gap: 16px; align-items: baseline; border-top: 1px solid rgba(255, 255, 255, .18); padding-top: 12px; }
+.stat b { font-family: var(--display); font-size: 2.05rem; line-height: 1; }
+.stat small { display: block; font-family: var(--mono); font-size: .7rem; margin-top: 2px; }
+.hero .k-fun { color: #B4B0F2; } .hero .k-walk { color: #8FD0AC; } .hero .k-cycle { color: #8DC0E4; }
+
+/* colour key under the header */
+.keybar { position: sticky; top: 0; z-index: 5; background: var(--bg); border-block: 1px solid var(--line); padding-block: 10px; align-items: center; }
+.key { display: flex; flex-wrap: wrap; column-gap: 16px; row-gap: 4px; font-size: .86rem; color: var(--muted); }
+.keybar .hint { font-size: .86rem; color: var(--muted); }
+
+/* chapters and chart panels */
+section.chapter { padding-top: 112px; }
+.chap-head { margin-bottom: 36px; }
+.chap-head h2 { font-size: clamp(1.6rem, 3vw, 2.25rem); margin-top: 10px; }
+.chap-head p { margin-top: 14px; color: var(--muted); }
+.pair { grid-template-rows: repeat(4, auto); }
+.panel { min-width: 0; display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 12px; }
+.panel.solo { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 12px; }
+.stack { margin-top: 72px; }
+.panel h3 { font-size: 1.2rem; }
+.chart { width: 100%; min-width: 0; overflow-x: auto; }
+.note { font-size: .95rem; color: var(--muted); line-height: 1.5; }
+.src { font-family: var(--mono); font-size: .68rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; align-self: end; }
+
+/* HTML legends above the charts */
+.legend { display: flex; flex-wrap: wrap; column-gap: 16px; row-gap: 6px; align-items: center; font-size: .85rem; color: var(--muted); min-height: 22px; }
+.sw, .dot { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.dot { border-radius: 50%; }
+.dot.big { width: 16px; height: 16px; } .dot.mid { width: 12px; height: 12px; } .dot.small { width: 8px; height: 8px; } .dot.tiny { width: 5px; height: 5px; }
+.dot.hollow { background: var(--bg); border: 2px solid var(--ink); }
+.tick-mark { display: inline-block; width: 4px; height: 12px; margin-right: 6px; vertical-align: -1px; background: var(--hi); }
+.dash { display: inline-block; width: 18px; border-top: 2px dashed var(--muted); margin-right: 6px; vertical-align: 3px; }
+.ring { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1.6px solid var(--ink); margin-right: 6px; vertical-align: -2px; }
+.c-walk { background: var(--walk); } .c-rail { background: var(--rail); } .c-cycle { background: var(--cycle); }
+.c-mtb { background: var(--mtb); } .c-multi { background: var(--multi); } .c-fun { background: var(--fun); }
+.c-hi { background: var(--hi); } .c-ink { background: var(--ink); } .c-muted { background: var(--muted); }
+.c-line { background: var(--line); } .c-base { background: var(--base); } .c-pram { background: #CAA794; }
+.ramp { display: inline-block; width: 64px; height: 10px; border-radius: 2px; margin: 0 6px; vertical-align: -1px; }
+.ramp.walk { background: linear-gradient(90deg, #E4ECE8, #8DAE9E, #274A3C); }
+.ramp.cycle { background: linear-gradient(90deg, #E4ECF1, #8CAEC4, #264A62); }
+
+/* Vega-Lite dropdown (Chapter 4): shown above the charts */
+.chart.vega-embed { display: flex !important; flex-direction: column; }
+.chart .vega-bindings { order: -1; margin-bottom: 14px; font-size: .9rem; color: var(--muted); }
+.chart .vega-bind select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 3px 6px; margin-left: 6px; }
+.vega-embed summary { display: none; }
+
+/* conclusion and footer */
+.tk3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--gap); row-gap: 40px; }
+.tk3 > div { border-top: 4px solid var(--ink); padding-top: 16px; }
+.tk3 .t-walk { border-color: var(--walk); } .tk3 .t-cycle { border-color: var(--cycle); } .tk3 .t-rail { border-color: var(--rail); }
+.tk3 .big { display: block; font-family: var(--display); font-size: 2.4rem; line-height: 1; margin-bottom: 12px; }
+.tk3 h3 { font-size: 1.15rem; margin-bottom: 6px; }
+.tk3 p { color: var(--muted); font-size: .98rem; }
+.visitor { margin-top: 48px; border-left: 3px solid var(--hi); padding-left: 14px; color: var(--muted); }
+.visitor b { color: var(--ink); }
+.foot { margin-top: 112px; border-top: 1px solid var(--line); padding-top: 32px; }
+.foot h3 { font-size: 1rem; margin-bottom: 8px; }
+.foot ul { margin: 0; padding-left: 1.1em; font-size: .88rem; color: var(--muted); }
+.foot li { margin-bottom: 4px; }
+.meta { margin-top: 48px; font-family: var(--mono); font-size: .74rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-wrap: wrap; gap: 6px 26px; }
+
+@media (max-width: 860px) {
+  .g2 { grid-template-columns: minmax(0, 1fr); row-gap: 64px; }
+  .hero.g2 { row-gap: 36px; }
+  .tk3 { grid-template-columns: minmax(0, 1fr); }
+  .foot .g2 { row-gap: 0; }
+  .keybar { position: static; }
+}

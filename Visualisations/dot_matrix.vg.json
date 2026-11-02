@@ -1,0 +1,182 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Chart 1. Which uses each trail type allows. Circle size = level of use, colour = trail type.",
+  "width": "container",
+  "height": 230,
+  "data": {
+    "url": "Data/trail_type_uses.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "level": "number"
+      }
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "use",
+      "type": "nominal",
+      "sort": [
+        "Walk",
+        "Bike",
+        "MTB",
+        "Horse",
+        "Wheelchair"
+      ],
+      "title": null,
+      "axis": {
+        "orient": "top",
+        "labelAngle": 0,
+        "domain": false,
+        "ticks": false
+      }
+    },
+    "y": {
+      "field": "trail_type",
+      "type": "nominal",
+      "sort": [
+        "Walking track",
+        "Rail trail",
+        "Cycling trail",
+        "Multi-use trail",
+        "Mountain-bike park"
+      ],
+      "title": null,
+      "axis": {
+        "domain": false,
+        "ticks": false
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rect",
+        "fill": null,
+        "stroke": "#E1E2DF"
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 1
+      },
+      "encoding": {
+        "size": {
+          "field": "level",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              1,
+              4
+            ],
+            "range": [
+              28,
+              430
+            ]
+          },
+          "legend": null
+        },
+        "color": {
+          "condition": {
+            "test": "datum.level == 1",
+            "value": "#E1E2DF"
+          },
+          "field": "trail_type",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Walking track",
+              "Rail trail",
+              "Cycling trail",
+              "Multi-use trail",
+              "Mountain-bike park"
+            ],
+            "range": [
+              "#2F6B4F",
+              "#A0522D",
+              "#2E6C93",
+              "#5E6E7A",
+              "#8E3B6E"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "trail_type",
+            "title": "Trail type"
+          },
+          {
+            "field": "use",
+            "title": "Use"
+          },
+          {
+            "field": "level_name",
+            "title": "Status"
+          },
+          {
+            "field": "basis",
+            "title": "Based on"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "use": "Wheelchair",
+            "trail_type": "Rail trail"
+          }
+        ]
+      },
+      "mark": {
+        "type": "rect",
+        "fill": null,
+        "stroke": "#C98A12",
+        "strokeWidth": 3
+      }
+    }
+  ],
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

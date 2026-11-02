@@ -1,0 +1,375 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Chart 4. Participation by age group. Hue = activity; lightness = that age group's rate divided by the activity's national rate.",
+  "width": "container",
+  "height": 230,
+  "data": {
+    "url": "Data/ausplay_national_2025.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "percent": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum.breakdown == 'Total' ? datum.percent : null",
+      "as": "total_value"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "max",
+          "field": "total_value",
+          "as": "national"
+        }
+      ],
+      "groupby": [
+        "activity"
+      ]
+    },
+    {
+      "filter": "datum.breakdown == 'Age'"
+    },
+    {
+      "calculate": "datum.percent / datum.national",
+      "as": "ratio"
+    },
+    {
+      "calculate": "{'Walking (Recreational)': 'Walking for fun', 'Bush walking': 'Bushwalking', 'Cycling': 'Cycling', 'Mountain biking': 'Mountain biking'}[datum.activity]",
+      "as": "activity_label"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "group",
+      "type": "ordinal",
+      "sort": [
+        "15-17",
+        "18-24",
+        "25-34",
+        "35-44",
+        "45-54",
+        "55-64",
+        "65+"
+      ],
+      "title": "Age group",
+      "axis": {
+        "labelAngle": 0,
+        "domain": false,
+        "ticks": false
+      }
+    },
+    "y": {
+      "field": "activity_label",
+      "type": "nominal",
+      "sort": [
+        "Walking for fun",
+        "Bushwalking",
+        "Cycling",
+        "Mountain biking"
+      ],
+      "title": null,
+      "axis": {
+        "domain": false,
+        "ticks": false
+      }
+    }
+  },
+  "layer": [
+    {
+      "transform": [
+        {
+          "filter": "datum.activity == 'Walking (Recreational)'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "stroke": "#FFFFFF",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "color": {
+          "field": "ratio",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.5,
+              1,
+              2
+            ],
+            "range": [
+              "#e8e7f3",
+              "#9e9bcb",
+              "#383869"
+            ],
+            "interpolate": "rgb",
+            "clamp": true
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "activity_label",
+            "title": "Activity"
+          },
+          {
+            "field": "group",
+            "title": "Age group"
+          },
+          {
+            "field": "percent",
+            "title": "% taking part",
+            "format": ".1f"
+          },
+          {
+            "field": "ratio",
+            "title": "× Australia's average",
+            "format": ".2f"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.activity == 'Bush walking'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "stroke": "#FFFFFF",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "color": {
+          "field": "ratio",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.5,
+              1,
+              2
+            ],
+            "range": [
+              "#e4ece8",
+              "#8dae9e",
+              "#274a3c"
+            ],
+            "interpolate": "rgb",
+            "clamp": true
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "activity_label",
+            "title": "Activity"
+          },
+          {
+            "field": "group",
+            "title": "Age group"
+          },
+          {
+            "field": "percent",
+            "title": "% taking part",
+            "format": ".1f"
+          },
+          {
+            "field": "ratio",
+            "title": "× Australia's average",
+            "format": ".2f"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.activity == 'Cycling'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "stroke": "#FFFFFF",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "color": {
+          "field": "ratio",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.5,
+              1,
+              2
+            ],
+            "range": [
+              "#e4ecf1",
+              "#8caec4",
+              "#264a62"
+            ],
+            "interpolate": "rgb",
+            "clamp": true
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "activity_label",
+            "title": "Activity"
+          },
+          {
+            "field": "group",
+            "title": "Age group"
+          },
+          {
+            "field": "percent",
+            "title": "% taking part",
+            "format": ".1f"
+          },
+          {
+            "field": "ratio",
+            "title": "× Australia's average",
+            "format": ".2f"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.activity == 'Mountain biking'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "stroke": "#FFFFFF",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "color": {
+          "field": "ratio",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.5,
+              1,
+              2
+            ],
+            "range": [
+              "#f0e6ec",
+              "#c193af",
+              "#5b2f4d"
+            ],
+            "interpolate": "rgb",
+            "clamp": true
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "activity_label",
+            "title": "Activity"
+          },
+          {
+            "field": "group",
+            "title": "Age group"
+          },
+          {
+            "field": "percent",
+            "title": "% taking part",
+            "format": ".1f"
+          },
+          {
+            "field": "ratio",
+            "title": "× Australia's average",
+            "format": ".2f"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "fontSize": 10
+      },
+      "encoding": {
+        "text": {
+          "field": "percent",
+          "format": ".1f"
+        },
+        "color": {
+          "condition": {
+            "test": "datum.ratio > 1.4",
+            "value": "#FFFFFF"
+          },
+          "value": "#1D2125"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "group": "65+",
+            "activity_label": "Bushwalking"
+          }
+        ]
+      },
+      "transform": [],
+      "mark": {
+        "type": "rect",
+        "fill": null,
+        "stroke": "#C98A12",
+        "strokeWidth": 3
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "color": "independent"
+    }
+  },
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

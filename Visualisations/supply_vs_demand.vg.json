@@ -1,0 +1,759 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Charts 8 (map 3) and 9. Supply meets demand: a choropleth with proportional symbols and a quadrant scatterplot, linked. The dropdown switches between walking and cycling; click a state to highlight it in both views.",
+  "params": [
+    {
+      "name": "compare",
+      "value": "walk",
+      "bind": {
+        "input": "select",
+        "options": [
+          "walk",
+          "cycle"
+        ],
+        "labels": [
+          "Walking tracks × bushwalking",
+          "Rail + cycling trails × cycling"
+        ],
+        "name": "Compare: "
+      }
+    },
+    {
+      "name": "state_pick",
+      "select": {
+        "type": "point",
+        "fields": [
+          "state"
+        ],
+        "on": "click",
+        "clear": "dblclick"
+      },
+      "views": [
+        "map_states",
+        "scatter_points"
+      ]
+    }
+  ],
+  "data": {
+    "url": "Data/trails.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "km": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "split(datum.states, '/')",
+      "as": "state"
+    },
+    {
+      "flatten": [
+        "state"
+      ]
+    },
+    {
+      "calculate": "datum.km / length(split(datum.states, '/'))",
+      "as": "km_in_state"
+    },
+    {
+      "calculate": "datum.type == 'Walking track' ? datum.km_in_state : 0",
+      "as": "walk_km"
+    },
+    {
+      "calculate": "(datum.type == 'Rail trail' || datum.type == 'Cycling trail') ? datum.km_in_state : 0",
+      "as": "railcycle_km"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "sum",
+          "field": "walk_km",
+          "as": "walk_km"
+        },
+        {
+          "op": "sum",
+          "field": "railcycle_km",
+          "as": "railcycle_km"
+        }
+      ],
+      "groupby": [
+        "state"
+      ]
+    },
+    {
+      "lookup": "state",
+      "from": {
+        "data": {
+          "url": "Data/states.csv",
+          "format": {
+            "type": "csv",
+            "parse": {
+              "population_thousands": "number",
+              "centre_lon": "number",
+              "centre_lat": "number",
+              "label_lon": "number",
+              "label_lat": "number"
+            }
+          }
+        },
+        "key": "state",
+        "fields": [
+          "state_name",
+          "population_thousands",
+          "centre_lon",
+          "centre_lat",
+          "label_lon",
+          "label_lat"
+        ]
+      }
+    },
+    {
+      "lookup": "state",
+      "from": {
+        "data": {
+          "url": "Data/ausplay_state_2025.csv",
+          "format": {
+            "type": "csv"
+          }
+        },
+        "key": "state",
+        "fields": [
+          "bush_walking",
+          "cycling"
+        ]
+      }
+    },
+    {
+      "calculate": "'AUS'",
+      "as": "country"
+    },
+    {
+      "lookup": "country",
+      "from": {
+        "data": {
+          "url": "Data/ausplay_state_2025.csv",
+          "format": {
+            "type": "csv"
+          }
+        },
+        "key": "state",
+        "fields": [
+          "bush_walking",
+          "cycling"
+        ]
+      },
+      "as": [
+        "aus_bush_walking",
+        "aus_cycling"
+      ]
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "sum",
+          "field": "walk_km",
+          "as": "all_walk_km"
+        },
+        {
+          "op": "sum",
+          "field": "railcycle_km",
+          "as": "all_railcycle_km"
+        },
+        {
+          "op": "sum",
+          "field": "population_thousands",
+          "as": "all_population"
+        }
+      ]
+    },
+    {
+      "calculate": "compare == 'walk' ? datum.walk_km : datum.railcycle_km",
+      "as": "km"
+    },
+    {
+      "calculate": "datum.km / datum.population_thousands * 100",
+      "as": "supply"
+    },
+    {
+      "calculate": "(compare == 'walk' ? datum.all_walk_km : datum.all_railcycle_km) / datum.all_population * 100",
+      "as": "national_supply"
+    },
+    {
+      "calculate": "toNumber(compare == 'walk' ? datum.bush_walking : datum.cycling)",
+      "as": "demand"
+    },
+    {
+      "calculate": "toNumber(compare == 'walk' ? datum.aus_bush_walking : datum.aus_cycling)",
+      "as": "national_demand"
+    },
+    {
+      "calculate": "datum.demand / datum.national_demand",
+      "as": "ratio"
+    },
+    {
+      "lookup": "state_name",
+      "from": {
+        "data": {
+          "url": "Data/aus_states.topojson",
+          "format": {
+            "type": "topojson",
+            "feature": "states"
+          }
+        },
+        "key": "properties.STATE_NAME"
+      },
+      "as": "geo"
+    }
+  ],
+  "hconcat": [
+    {
+      "width": 500,
+      "height": 330,
+      "title": "Demand (fill) and trail supply (circles)",
+      "projection": {
+        "type": "conicEqualArea",
+        "parallels": [
+          -18,
+          -36
+        ],
+        "rotate": [
+          -132,
+          0
+        ]
+      },
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": "compare == 'walk'"
+            }
+          ],
+          "mark": {
+            "type": "geoshape",
+            "stroke": "#5A6067",
+            "strokeWidth": 0.4,
+            "cursor": "pointer"
+          },
+          "encoding": {
+            "shape": {
+              "field": "geo",
+              "type": "geojson"
+            },
+            "color": {
+              "field": "ratio",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0.5,
+                  1,
+                  2
+                ],
+                "range": [
+                  "#e4ece8",
+                  "#8dae9e",
+                  "#274a3c"
+                ],
+                "interpolate": "rgb",
+                "clamp": true
+              },
+              "legend": null
+            },
+            "opacity": {
+              "condition": {
+                "param": "state_pick",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.2
+            },
+            "tooltip": [
+              {
+                "field": "state_name",
+                "title": "State"
+              },
+              {
+                "field": "demand",
+                "title": "% of adults taking part",
+                "format": ".1f"
+              },
+              {
+                "field": "supply",
+                "title": "Trail km per 100,000 people",
+                "format": ".1f"
+              }
+            ]
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "compare == 'cycle'"
+            }
+          ],
+          "mark": {
+            "type": "geoshape",
+            "stroke": "#5A6067",
+            "strokeWidth": 0.4,
+            "cursor": "pointer"
+          },
+          "encoding": {
+            "shape": {
+              "field": "geo",
+              "type": "geojson"
+            },
+            "color": {
+              "field": "ratio",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0.5,
+                  1,
+                  2
+                ],
+                "range": [
+                  "#e4ecf1",
+                  "#8caec4",
+                  "#264a62"
+                ],
+                "interpolate": "rgb",
+                "clamp": true
+              },
+              "legend": null
+            },
+            "opacity": {
+              "condition": {
+                "param": "state_pick",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.2
+            },
+            "tooltip": [
+              {
+                "field": "state_name",
+                "title": "State"
+              },
+              {
+                "field": "demand",
+                "title": "% of adults taking part",
+                "format": ".1f"
+              },
+              {
+                "field": "supply",
+                "title": "Trail km per 100,000 people",
+                "format": ".1f"
+              }
+            ]
+          }
+        },
+        {
+          "name": "map_states",
+          "mark": {
+            "type": "geoshape",
+            "fill": "#1D2125",
+            "fillOpacity": 0.001,
+            "strokeWidth": 0,
+            "cursor": "pointer"
+          },
+          "encoding": {
+            "shape": {
+              "field": "geo",
+              "type": "geojson"
+            },
+            "tooltip": [
+              {
+                "field": "state_name",
+                "title": "State"
+              },
+              {
+                "field": "demand",
+                "title": "% of adults taking part",
+                "format": ".1f"
+              },
+              {
+                "field": "supply",
+                "title": "Trail km per 100,000 people",
+                "format": ".1f"
+              }
+            ]
+          }
+        },
+        {
+          "mark": {
+            "type": "circle",
+            "fill": null,
+            "stroke": "#1D2125",
+            "strokeWidth": 1.6
+          },
+          "encoding": {
+            "longitude": {
+              "field": "centre_lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "centre_lat",
+              "type": "quantitative"
+            },
+            "size": {
+              "field": "supply",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0,
+                  110
+                ],
+                "range": [
+                  0,
+                  1500
+                ],
+                "zero": true
+              },
+              "legend": null
+            },
+            "opacity": {
+              "condition": {
+                "param": "state_pick",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.2
+            },
+            "tooltip": [
+              {
+                "field": "state_name",
+                "title": "State"
+              },
+              {
+                "field": "demand",
+                "title": "% of adults taking part",
+                "format": ".1f"
+              },
+              {
+                "field": "supply",
+                "title": "Trail km per 100,000 people",
+                "format": ".1f"
+              }
+            ]
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "fontWeight": 600,
+            "dy": -2
+          },
+          "encoding": {
+            "longitude": {
+              "field": "label_lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "label_lat",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "state"
+            },
+            "opacity": {
+              "condition": {
+                "param": "state_pick",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.2
+            }
+          }
+        }
+      ],
+      "resolve": {
+        "scale": {
+          "color": "independent"
+        }
+      }
+    },
+    {
+      "width": 440,
+      "height": 330,
+      "title": "Each state's supply against its demand",
+      "encoding": {
+        "x": {
+          "field": "supply",
+          "type": "quantitative",
+          "title": "Trail km per 100,000 people",
+          "scale": {
+            "zero": true,
+            "nice": true
+          }
+        },
+        "y": {
+          "field": "demand",
+          "type": "quantitative",
+          "title": "% of adults taking part",
+          "scale": {
+            "zero": false,
+            "nice": true
+          },
+          "axis": {
+            "minExtent": 40,
+            "maxExtent": 40
+          }
+        }
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "rule",
+            "strokeDash": [
+              5,
+              4
+            ],
+            "color": "#5A6067"
+          },
+          "encoding": {
+            "x": {
+              "field": "national_supply",
+              "type": "quantitative"
+            },
+            "y": null
+          }
+        },
+        {
+          "mark": {
+            "type": "rule",
+            "strokeDash": [
+              5,
+              4
+            ],
+            "color": "#5A6067"
+          },
+          "encoding": {
+            "y": {
+              "field": "national_demand",
+              "type": "quantitative"
+            },
+            "x": null
+          }
+        },
+        {
+          "name": "scatter_points",
+          "mark": {
+            "type": "circle",
+            "size": 150,
+            "opacity": 1,
+            "cursor": "pointer"
+          },
+          "encoding": {
+            "color": {
+              "condition": {
+                "test": "compare == 'walk'",
+                "value": "#2F6B4F"
+              },
+              "value": "#2E6C93"
+            },
+            "opacity": {
+              "condition": {
+                "param": "state_pick",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.2
+            },
+            "tooltip": [
+              {
+                "field": "state_name",
+                "title": "State"
+              },
+              {
+                "field": "demand",
+                "title": "% of adults taking part",
+                "format": ".1f"
+              },
+              {
+                "field": "supply",
+                "title": "Trail km per 100,000 people",
+                "format": ".1f"
+              }
+            ]
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "fontWeight": 600,
+            "dy": -12
+          },
+          "encoding": {
+            "text": {
+              "field": "state"
+            },
+            "opacity": {
+              "condition": {
+                "param": "state_pick",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.2
+            }
+          }
+        },
+        {
+          "data": {
+            "values": [
+              {
+                "mode": "walk",
+                "x": 76.7,
+                "y": 15.4,
+                "label": "SA: most track, fewest bushwalkers",
+                "align": "right"
+              },
+              {
+                "mode": "walk",
+                "x": 52.2,
+                "y": 27.4,
+                "label": "TAS: busiest bush",
+                "align": "left"
+              },
+              {
+                "mode": "cycle",
+                "x": 0,
+                "y": 13.9,
+                "label": "ACT: rides most, no listed trails",
+                "align": "left"
+              },
+              {
+                "mode": "cycle",
+                "x": 56.2,
+                "y": 7.95,
+                "label": "SA: most trail, average riding",
+                "align": "right"
+              }
+            ]
+          },
+          "transform": [
+            {
+              "filter": "datum.mode == compare && datum.align == 'left'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 10
+          },
+          "encoding": {
+            "x": {
+              "field": "x",
+              "type": "quantitative"
+            },
+            "y": {
+              "field": "y",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "label"
+            }
+          }
+        },
+        {
+          "data": {
+            "values": [
+              {
+                "mode": "walk",
+                "x": 76.7,
+                "y": 15.4,
+                "label": "SA: most track, fewest bushwalkers",
+                "align": "right"
+              },
+              {
+                "mode": "walk",
+                "x": 52.2,
+                "y": 27.4,
+                "label": "TAS: busiest bush",
+                "align": "left"
+              },
+              {
+                "mode": "cycle",
+                "x": 0,
+                "y": 13.9,
+                "label": "ACT: rides most, no listed trails",
+                "align": "left"
+              },
+              {
+                "mode": "cycle",
+                "x": 56.2,
+                "y": 7.95,
+                "label": "SA: most trail, average riding",
+                "align": "right"
+              }
+            ]
+          },
+          "transform": [
+            {
+              "filter": "datum.mode == compare && datum.align == 'right'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "right",
+            "dx": -10
+          },
+          "encoding": {
+            "x": {
+              "field": "x",
+              "type": "quantitative"
+            },
+            "y": {
+              "field": "y",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "label"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "spacing": 40,
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

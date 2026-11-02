@@ -1,0 +1,41 @@
+activity,breakdown,group,percent
+Walking (Recreational),Total,All adults,50.2
+Walking (Recreational),Sex,Male,42.49
+Walking (Recreational),Sex,Female,57.75
+Walking (Recreational),Age,15-17,30.35
+Walking (Recreational),Age,18-24,34.19
+Walking (Recreational),Age,25-34,41.86
+Walking (Recreational),Age,35-44,47.55
+Walking (Recreational),Age,45-54,58.67
+Walking (Recreational),Age,55-64,66.03
+Walking (Recreational),Age,65+,55.82
+Bush walking,Total,All adults,17.47
+Bush walking,Sex,Male,16.3
+Bush walking,Sex,Female,18.6
+Bush walking,Age,15-17,14.6
+Bush walking,Age,18-24,17.33
+Bush walking,Age,25-34,20.3
+Bush walking,Age,35-44,21.45
+Bush walking,Age,45-54,19.69
+Bush walking,Age,55-64,19.55
+Bush walking,Age,65+,9.57
+Cycling,Total,All adults,8.29
+Cycling,Sex,Male,10.43
+Cycling,Sex,Female,6.25
+Cycling,Age,15-17,6.66
+Cycling,Age,18-24,5.59
+Cycling,Age,25-34,7.12
+Cycling,Age,35-44,9.26
+Cycling,Age,45-54,11.59
+Cycling,Age,55-64,11.95
+Cycling,Age,65+,5.58
+Mountain biking,Total,All adults,0.73
+Mountain biking,Sex,Male,1.18
+Mountain biking,Sex,Female,0.28
+Mountain biking,Age,15-17,1.72
+Mountain biking,Age,18-24,0.48
+Mountain biking,Age,25-34,0.61
+Mountain biking,Age,35-44,0.97
+Mountain biking,Age,45-54,1.21
+Mountain biking,Age,55-64,0.71
+Mountain biking,Age,65+,0.21

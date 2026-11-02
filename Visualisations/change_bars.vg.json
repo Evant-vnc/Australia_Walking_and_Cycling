@@ -1,0 +1,250 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Chart 12. Change in participation from 2024 to 2025, in percentage points.",
+  "width": "container",
+  "height": 260,
+  "data": {
+    "url": "Data/ausplay_change_2024_2025.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "percent": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "pivot": "year",
+      "value": "percent",
+      "groupby": [
+        "activity"
+      ]
+    },
+    {
+      "calculate": "datum['2025'] - datum['2024']",
+      "as": "change"
+    },
+    {
+      "calculate": "{'Walking (Recreational)': 'Walking for fun', 'Bush walking': 'Bushwalking', 'Cycling': 'Cycling', 'Mountain biking': 'Mountain biking'}[datum.activity]",
+      "as": "activity_label"
+    },
+    {
+      "calculate": "format(datum['2024'], '.1f') + '% → ' + format(datum['2025'], '.1f') + '%'",
+      "as": "levels"
+    },
+    {
+      "calculate": "-1",
+      "as": "left_edge"
+    }
+  ],
+  "encoding": {
+    "y": {
+      "field": "activity_label",
+      "type": "nominal",
+      "sort": [
+        "Walking for fun",
+        "Bushwalking",
+        "Cycling",
+        "Mountain biking"
+      ],
+      "title": null,
+      "axis": {
+        "domain": false,
+        "ticks": false
+      }
+    },
+    "x": {
+      "field": "change",
+      "type": "quantitative",
+      "title": "Change (percentage points)",
+      "scale": {
+        "domain": [
+          -1,
+          1
+        ],
+        "nice": false
+      },
+      "axis": {
+        "values": [
+          -1,
+          -0.5,
+          0,
+          0.5,
+          1
+        ],
+        "labelExpr": "datum.value > 0 ? '+' + datum.value : datum.value",
+        "grid": true
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "height": 14,
+        "cornerRadius": 1
+      },
+      "encoding": {
+        "x2": {
+          "datum": 0
+        },
+        "color": {
+          "field": "activity",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Walking (Recreational)",
+              "Bush walking",
+              "Cycling",
+              "Mountain biking"
+            ],
+            "range": [
+              "#4E4AA0",
+              "#2F6B4F",
+              "#2E6C93",
+              "#8E3B6E"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "activity_label",
+            "title": "Activity"
+          },
+          {
+            "field": "2024",
+            "title": "2024 (%)",
+            "format": ".1f"
+          },
+          {
+            "field": "2025",
+            "title": "2025 (%)",
+            "format": ".1f"
+          },
+          {
+            "field": "change",
+            "title": "Change (points)",
+            "format": "+.2f"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "x": 0
+          }
+        ]
+      },
+      "transform": [],
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 1.5,
+        "color": "#1D2125"
+      },
+      "encoding": {
+        "x": {
+          "field": "x",
+          "type": "quantitative"
+        },
+        "y": null
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.change >= 0"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 6
+      },
+      "encoding": {
+        "text": {
+          "field": "change",
+          "format": "+.2f"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.change < 0"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -6
+      },
+      "encoding": {
+        "text": {
+          "field": "change",
+          "format": "+.2f"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dy": 19,
+        "fontSize": 9.5,
+        "color": "#5A6067"
+      },
+      "encoding": {
+        "x": {
+          "field": "left_edge",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "levels"
+        }
+      }
+    }
+  ],
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

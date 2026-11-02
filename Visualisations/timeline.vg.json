@@ -1,0 +1,297 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Chart 13. Milestone trail openings by type, 1978 to 2021. Labels alternate above and below the line.",
+  "width": "container",
+  "height": 260,
+  "data": {
+    "url": "Data/milestones.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "year": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "window": [
+        {
+          "op": "row_number",
+          "as": "order"
+        }
+      ],
+      "sort": [
+        {
+          "field": "year"
+        }
+      ]
+    },
+    {
+      "calculate": "[1.2, -1.2, 2.4, -2.4][(datum.order - 1) % 4]",
+      "as": "lane"
+    },
+    {
+      "calculate": "datum.lane > 0 ? datum.lane - 0.45 : datum.lane + 0.45",
+      "as": "stem_end"
+    },
+    {
+      "calculate": "0",
+      "as": "zero"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          1970,
+          2031
+        ]
+      },
+      "axis": null,
+      "title": null
+    }
+  },
+  "layer": [
+    {
+      "data": {
+        "values": [
+          {
+            "start": 1970,
+            "end": 2031
+          }
+        ]
+      },
+      "transform": [],
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 1.5,
+        "color": "#5A6067"
+      },
+      "encoding": {
+        "x": {
+          "field": "start",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "end"
+        },
+        "y": {
+          "datum": 0,
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              -3.2,
+              3.2
+            ]
+          },
+          "axis": null
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "decade": 1980
+          },
+          {
+            "decade": 1990
+          },
+          {
+            "decade": 2000
+          },
+          {
+            "decade": 2010
+          },
+          {
+            "decade": 2020
+          }
+        ]
+      },
+      "transform": [],
+      "mark": {
+        "type": "text",
+        "dy": 15,
+        "color": "#5A6067"
+      },
+      "encoding": {
+        "x": {
+          "field": "decade",
+          "type": "quantitative"
+        },
+        "y": {
+          "datum": 0
+        },
+        "text": {
+          "field": "decade",
+          "format": "d"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "rule",
+        "strokeDash": [
+          2,
+          3
+        ],
+        "color": "#5A6067"
+      },
+      "encoding": {
+        "y": {
+          "field": "zero",
+          "type": "quantitative"
+        },
+        "y2": {
+          "field": "stem_end"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 90,
+        "shape": "diamond",
+        "opacity": 1
+      },
+      "encoding": {
+        "y": {
+          "datum": 0
+        },
+        "color": {
+          "field": "type",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Walking track",
+              "Rail trail",
+              "Cycling trail",
+              "Multi-use trail"
+            ],
+            "range": [
+              "#2F6B4F",
+              "#A0522D",
+              "#2E6C93",
+              "#5E6E7A"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "format": "d",
+            "title": "Year"
+          },
+          {
+            "field": "event",
+            "title": "Milestone"
+          },
+          {
+            "field": "type",
+            "title": "Type"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+        "fontSize": 10.5,
+        "fontWeight": 600,
+        "dy": -6,
+        "baseline": "bottom"
+      },
+      "encoding": {
+        "y": {
+          "field": "lane",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "event"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": 3,
+        "baseline": "top",
+        "fontSize": 10
+      },
+      "encoding": {
+        "y": {
+          "field": "lane",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "year",
+          "format": "d"
+        },
+        "color": {
+          "field": "type",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Walking track",
+              "Rail trail",
+              "Cycling trail",
+              "Multi-use trail"
+            ],
+            "range": [
+              "#2F6B4F",
+              "#A0522D",
+              "#2E6C93",
+              "#5E6E7A"
+            ]
+          },
+          "legend": null
+        }
+      }
+    }
+  ],
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

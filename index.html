@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trails and the People Who Use Them</title>
+
+  <!-- Vega, Vega-Lite and Vega-Embed -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.30.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.21.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0"></script>
+
+  <!-- Fonts and styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="js/vega_lite_vis.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero g2">
+    <div>
+      <p class="eyebrow"><span class="diamond"></span>Australia's walking &amp; cycling trails</p>
+      <h1>Trails and the people who use them</h1>
+      <p class="lede measure">Australia has five very different kinds of trail. Do they sit where the walkers and riders are?</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b class="k-fun">11.4M</b><span>adults walked for fun in 2025, half of all adults</span></div>
+      <div class="stat"><b class="k-walk">4.0M</b><span>went bushwalking, about one adult in six</span></div>
+      <div class="stat"><b class="k-cycle">1.9M</b><span>rode a bike for exercise or fun</span></div>
+    </div>
+  </header>
+
+  <div class="keybar g2">
+    <div class="key" aria-label="Colour key">
+      <span><span class="sw c-walk"></span>Walking tracks · bushwalking</span>
+      <span><span class="sw c-rail"></span>Rail trails</span>
+      <span><span class="sw c-fun"></span>Walking for fun</span>
+      <span><span class="sw c-cycle"></span>Cycling</span>
+      <span><span class="sw c-mtb"></span>Mountain biking</span>
+      <span><span class="sw c-hi"></span>Highlight</span>
+    </div>
+    <p class="hint">Hover over any mark for its numbers. Maps respond to hovering and clicking.</p>
+  </div>
+
+  <!-- Chapter 1 -->
+  <section class="chapter">
+    <div class="chap-head">
+      <p class="chap-label"><span class="diamond"></span>The trails</p>
+      <h2>Five kinds of trail, built for different trips</h2>
+      <p class="measure"><span class="k-walk">Walking tracks</span> are long and rough. <span class="k-rail">Rail trails</span> are short and gentle. Bikes get their own <span class="k-cycle">cycling trails</span> and <span class="k-mtb">mountain-bike parks</span>.</p>
+    </div>
+    <div class="g2 pair">
+      <div class="panel">
+        <h3>Only rail trails welcome everyone</h3>
+        <div class="legend"><span><span class="dot big c-muted"></span>Main use</span><span><span class="dot mid c-muted"></span>Allowed</span><span><span class="dot small c-muted"></span>On some trails</span><span><span class="dot tiny c-line"></span>Not intended</span></div>
+        <div class="chart" id="dot_matrix"></div>
+        <p class="note measure">Rail trails are the only type that lists wheelchair access, on one trail in three.</p>
+      </div>
+      <div class="panel">
+        <h3>A rail trail takes an afternoon, a walking track several days</h3>
+        <div class="legend"><span><span class="dot c-muted"></span>One trail (colour = type)</span><span><span class="tick-mark"></span>Middle trail (median)</span></div>
+        <div class="chart" id="strip_plot"></div>
+        <p class="note measure">Most rail trails are under 50 km. The 5,330 km Bicentennial Trail runs off the edge.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 2 -->
+  <section class="chapter">
+    <div class="chap-head">
+      <p class="chap-label"><span class="diamond"></span>The people</p>
+      <h2>Women walk more, men ride more</h2>
+      <p class="measure">Half of all adults <span class="k-fun">walk for fun</span>. <span class="k-walk">Bushwalking</span> peaks in middle age, then <span class="k-hi">halves after 65</span>.</p>
+    </div>
+    <div class="g2 pair">
+      <div class="panel">
+        <h3>The gender gap flips between walking and riding</h3>
+        <div class="legend"><span><span class="dot c-ink"></span>Men</span><span><span class="dot hollow"></span>Women</span><span>Line colour = activity</span></div>
+        <div class="chart" id="gender_dumbbell"></div>
+        <p class="note measure">Mountain biking is about four parts men to one part women.</p>
+      </div>
+      <div class="panel">
+        <h3>Older Australians swap the bush for gentler walks</h3>
+        <div class="legend"><span><b>Lighter</b> = below that activity's national average · <b>darker</b> = above</span><span>Number = % taking part</span></div>
+        <div class="chart" id="age_heatmap"></div>
+        <p class="note measure">At 65+, walking for fun stays above 55%. Bushwalking falls below 10%.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 3 -->
+  <section class="chapter">
+    <div class="chap-head">
+      <p class="chap-label"><span class="diamond"></span>The map</p>
+      <h2>Tasmanians and Canberrans head out the most</h2>
+      <p class="measure">All four maps share one scale: each state against Australia's average. <span class="k-walk">Tasmania</span> and the <span class="k-cycle">ACT</span> stand out. Walking for fun is near average everywhere.</p>
+    </div>
+    <div class="panel solo">
+      <h3>Share of adults taking part, by state</h3>
+      <div class="legend"><span><b>Lighter</b> = below Australia's average · <b>darker</b> = above</span><span>Labels = % · * small survey sample</span><span>Hover a state to find it on every map</span></div>
+      <div class="chart" id="small_multiple_maps"></div>
+    </div>
+    <div class="g2 pair stack">
+      <div class="panel">
+        <h3>Where the listed trails are</h3>
+        <div class="legend"><span>Click a trail type in the legend to show only that type</span></div>
+        <div class="chart" id="symbol_map"></div>
+        <p class="note measure">Rail trails crowd the south-east. Long tracks run through the remote north and west.</p>
+      </div>
+      <div class="panel">
+        <h3>Trail kilometres for every 100,000 people</h3>
+        <div class="legend"><span><span class="dot c-walk"></span>Walking tracks</span><span><span class="dot c-rail"></span>Rail + cycling trails</span></div>
+        <div class="chart" id="supply_dotplot"></div>
+        <p class="note measure">Outside the ACT, NSW has the least rail and cycling trail per person.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 4 -->
+  <section class="chapter">
+    <div class="chap-head">
+      <p class="chap-label"><span class="diamond"></span>Supply meets demand</p>
+      <h2>More trail does not mean more walkers</h2>
+      <p class="measure"><span class="k-hi">South Australia</span> has plenty of track per person but the fewest bushwalkers. <span class="k-cycle">Canberra</span> rides most with no listed rail trails.</p>
+    </div>
+    <div class="panel solo">
+      <h3>Where trails and users do not match</h3>
+      <div class="legend">
+        <span>Fill: <b>darker</b> = more users than Australia's average</span>
+        <span>bushwalking<span class="ramp walk"></span></span>
+        <span>cycling<span class="ramp cycle"></span></span>
+        <span><span class="ring"></span>Circle = trail km per 100,000 people</span>
+        <span><span class="dash"></span>National average</span>
+      </div>
+      <div class="chart" id="supply_vs_demand"></div>
+      <p class="note measure">Big circles over pale states mean trails with few local users. Points top-left have keen users but few trails; bottom-right, trails waiting for users. Click a state to find it in both views (double-click to clear).</p>
+    </div>
+  </section>
+
+  <!-- Chapter 5 -->
+  <section class="chapter">
+    <div class="chap-head">
+      <p class="chap-label"><span class="diamond"></span>Access</p>
+      <h2>Flat trails matter for older walkers</h2>
+      <p class="measure">Walkers over 65 need gentle paths. Only <span class="k-rail">39 of 115 rail trails</span> list wheelchair access, and none in WA.</p>
+    </div>
+    <div class="g2 pair">
+      <div class="panel">
+        <h3>115 rail trails, one square each</h3>
+        <div class="legend"><span><span class="sw c-rail"></span>Wheelchair suitable</span><span><span class="sw c-pram"></span>Pram only</span><span><span class="sw c-base"></span>Neither listed</span></div>
+        <div class="chart" id="waffle"></div>
+        <p class="note measure">About one in three rail trails is listed as suitable for a wheelchair.</p>
+      </div>
+      <div class="panel">
+        <h3>Wheelchair-friendly rail trails, by state</h3>
+        <div class="legend"><span><span class="dot c-rail"></span>Share suitable</span><span>Label = suitable / listed</span></div>
+        <div class="chart" id="access_lollipop"></div>
+        <p class="note measure">The NT and SA lead; WA lists none of its 17.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 6 -->
+  <section class="chapter">
+    <div class="chap-head">
+      <p class="chap-label"><span class="diamond"></span>Change</p>
+      <h2>The trails keep growing, the crowds hold steady</h2>
+      <p class="measure">New trails open every few years. Participation barely moved between 2024 and 2025.</p>
+    </div>
+    <div class="g2 pair">
+      <div class="panel">
+        <h3>Participation barely moved, 2024 to 2025</h3>
+        <div class="legend"><span>Bar colour = activity</span><span>Right = rose · left = fell</span><span>Grey text = 2024 → 2025 share</span></div>
+        <div class="chart" id="change_bars"></div>
+        <p class="note measure">Every change is under one point, close to the survey's error. Points, not %: mountain biking's +0.14 would read as +24%.</p>
+      </div>
+      <div class="panel">
+        <h3>Long walks first, rail trails next, bikes later</h3>
+        <div class="legend"><span><span class="sw c-walk"></span>Walking track</span><span><span class="sw c-rail"></span>Rail trail</span><span><span class="sw c-cycle"></span>Cycling trail</span><span><span class="sw c-multi"></span>Multi-use trail</span></div>
+        <div class="chart" id="timeline"></div>
+        <p class="note measure">Mid-1990s rail-trail date is approximate (opened in stages).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Conclusion -->
+  <section class="chapter">
+    <div class="chap-head">
+      <p class="chap-label"><span class="diamond"></span>Conclusion</p>
+      <h2>Trails and people do not always line up</h2>
+      <p class="measure">Australia keeps adding trails. Who uses them depends on who lives nearby, and how old they are.</p>
+    </div>
+    <div class="tk3">
+      <div class="t-walk"><b class="big k-walk">15.4%</b><h3>More track does not mean more walkers</h3><p class="measure">SA has the second-most walking track per person, but the fewest bushwalkers.</p></div>
+      <div class="t-cycle"><b class="big k-cycle">14.0%</b><h3>Riders ride where they live</h3><p class="measure">Canberra cycles the most, with no listed rail or cycling trails.</p></div>
+      <div class="t-rail"><b class="big k-rail">39 of 115</b><h3>Gentle trails will matter more</h3><p class="measure">Bushwalking halves after 65. Only a third of rail trails suit wheelchairs.</p></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="g2">
+      <div>
+        <h3>Data sources</h3>
+        <ul>
+          <li><a href="https://www.ausport.gov.au/clearinghouse/research/ausplay/results/data-tables">Australian Sports Commission: AusPlay data tables, Jan–Dec 2025</a> (released 30 April 2026)</li>
+          <li><a href="https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/latest-release">ABS: National, state and territory population, March 2026</a></li>
+          <li>State boundaries: <a href="https://github.com/tonywr71/GeoJson-Data">tonywr71/GeoJson-Data</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Trail lists</h3>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/List_of_rail_trails_in_Australia">Wikipedia: List of rail trails in Australia</a> (accessed 13 Oct 2026)</li>
+          <li><a href="https://en.wikipedia.org/wiki/List_of_long-distance_hiking_tracks_in_Australia">Wikipedia: List of long-distance hiking tracks</a> · <a href="https://en.wikipedia.org/wiki/Mountain_biking_in_Australia">Mountain biking in Australia</a></li>
+          <li>Opening years: each trail's Wikipedia article; <a href="https://www.monarorailtrail.com.au/assets/documents/Reports/RTA_Southern_NSW_July_2024.pdf">Rail Trails Australia (2024)</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="meta"><span>Author: Evan Tee Chuan Hao, FIT3179 Data Visualisation 2</span></div>
+  </footer>
+
+</div>
+</body>
+</html>

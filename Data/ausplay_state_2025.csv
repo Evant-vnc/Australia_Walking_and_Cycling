@@ -1,0 +1,10 @@
+state,state_name,walking_recreational,bush_walking,cycling,mountain_biking,walking_recreational_caution,bush_walking_caution,cycling_caution,mountain_biking_caution
+NSW,New South Wales,48.21,17.36,6.97,0.57,no,no,no,no
+VIC,Victoria,51.6,16.12,9.04,0.5,no,no,no,no
+QLD,Queensland,49.76,17.68,7.61,0.91,no,no,no,no
+SA,South Australia,51.58,15.38,8.36,0.53,no,no,no,yes
+WA,Western Australia,51.01,18.27,10.34,1.15,no,no,no,no
+TAS,Tasmania,55.91,27.52,9.14,1.77,no,no,no,no
+NT,Northern Territory,48.07,18.96,9.94,1.03,no,no,no,yes
+ACT,Australian Capital Territory,54.2,26.85,13.99,1.28,no,no,no,yes
+AUS,Australia,50.2,17.47,8.29,0.73,no,no,no,no

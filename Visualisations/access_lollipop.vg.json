@@ -1,0 +1,180 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Chart 11. Share of each state's listed rail trails that are wheelchair suitable.",
+  "width": "container",
+  "height": 240,
+  "data": {
+    "url": "Data/trails.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "wheelchair": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "filter": "datum.type == 'Rail trail'"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "count",
+          "as": "listed"
+        },
+        {
+          "op": "sum",
+          "field": "wheelchair",
+          "as": "suitable"
+        }
+      ],
+      "groupby": [
+        "states"
+      ]
+    },
+    {
+      "calculate": "round(datum.suitable / datum.listed * 100)",
+      "as": "share"
+    },
+    {
+      "calculate": "datum.suitable + ' / ' + datum.listed",
+      "as": "label"
+    }
+  ],
+  "encoding": {
+    "y": {
+      "field": "states",
+      "type": "nominal",
+      "sort": "-x",
+      "title": null,
+      "axis": {
+        "domain": false,
+        "ticks": false,
+        "labelFont": "\"IBM Plex Mono\", monospace"
+      }
+    },
+    "x": {
+      "field": "share",
+      "type": "quantitative",
+      "title": "% of the state's rail trails",
+      "scale": {
+        "domain": [
+          0,
+          115
+        ]
+      },
+      "axis": {
+        "values": [
+          0,
+          25,
+          50,
+          75,
+          100
+        ]
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 2,
+        "color": "#E1E2DF"
+      },
+      "encoding": {
+        "x": {
+          "datum": 0
+        },
+        "x2": {
+          "field": "share"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 100,
+        "opacity": 1
+      },
+      "encoding": {
+        "color": {
+          "condition": {
+            "test": "datum.share == 0",
+            "value": "#C98A12"
+          },
+          "value": "#A0522D"
+        },
+        "tooltip": [
+          {
+            "field": "states",
+            "title": "State"
+          },
+          {
+            "field": "suitable",
+            "title": "Wheelchair suitable"
+          },
+          {
+            "field": "listed",
+            "title": "Rail trails listed"
+          },
+          {
+            "field": "share",
+            "title": "Share (%)"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 9
+      },
+      "encoding": {
+        "text": {
+          "field": "label"
+        }
+      }
+    }
+  ],
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

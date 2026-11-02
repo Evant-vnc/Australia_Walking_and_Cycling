@@ -1,0 +1,26 @@
+trail_type,use,level,level_name,basis
+Walking track,Walk,4,Main use,Trail descriptions (Wikipedia)
+Walking track,Bike,1,Not intended or not listed,Trail descriptions (Wikipedia)
+Walking track,MTB,1,Not intended or not listed,Trail descriptions (Wikipedia)
+Walking track,Horse,1,Not intended or not listed,Trail descriptions (Wikipedia)
+Walking track,Wheelchair,1,Not intended or not listed,Trail descriptions (Wikipedia)
+Rail trail,Walk,3,Allowed,99% of the 115 listed rail trails
+Rail trail,Bike,2,On some trails,60% of the 115 listed rail trails
+Rail trail,MTB,3,Allowed,88% of the 115 listed rail trails
+Rail trail,Horse,2,On some trails,30% of the 115 listed rail trails
+Rail trail,Wheelchair,2,On some trails,34% of the 115 listed rail trails
+Cycling trail,Walk,2,On some trails,Trail descriptions (Wikipedia)
+Cycling trail,Bike,4,Main use,Trail descriptions (Wikipedia)
+Cycling trail,MTB,3,Allowed,Trail descriptions (Wikipedia)
+Cycling trail,Horse,1,Not intended or not listed,Trail descriptions (Wikipedia)
+Cycling trail,Wheelchair,1,Not intended or not listed,Trail descriptions (Wikipedia)
+Multi-use trail,Walk,3,Allowed,Trail descriptions (Wikipedia)
+Multi-use trail,Bike,3,Allowed,Trail descriptions (Wikipedia)
+Multi-use trail,MTB,2,On some trails,Trail descriptions (Wikipedia)
+Multi-use trail,Horse,2,On some trails,Trail descriptions (Wikipedia)
+Multi-use trail,Wheelchair,1,Not intended or not listed,Trail descriptions (Wikipedia)
+Mountain-bike park,Walk,2,On some trails,Trail descriptions (Wikipedia)
+Mountain-bike park,Bike,1,Not intended or not listed,Trail descriptions (Wikipedia)
+Mountain-bike park,MTB,4,Main use,Trail descriptions (Wikipedia)
+Mountain-bike park,Horse,1,Not intended or not listed,Trail descriptions (Wikipedia)
+Mountain-bike park,Wheelchair,1,Not intended or not listed,Trail descriptions (Wikipedia)

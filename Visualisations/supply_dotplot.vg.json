@@ -1,0 +1,266 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Chart 7. Trail kilometres for every 100,000 people, by state. Trails crossing state borders are split evenly between their states.",
+  "width": "container",
+  "height": 320,
+  "data": {
+    "url": "Data/trails.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "km": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "split(datum.states, '/')",
+      "as": "state"
+    },
+    {
+      "flatten": [
+        "state"
+      ]
+    },
+    {
+      "calculate": "datum.km / length(split(datum.states, '/'))",
+      "as": "km_in_state"
+    },
+    {
+      "calculate": "datum.type == 'Walking track' ? 'Walking tracks' : (datum.type == 'Rail trail' || datum.type == 'Cycling trail') ? 'Rail + cycling trails' : 'other'",
+      "as": "group"
+    },
+    {
+      "filter": "datum.group != 'other'"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "sum",
+          "field": "km_in_state",
+          "as": "km"
+        }
+      ],
+      "groupby": [
+        "state",
+        "group"
+      ]
+    },
+    {
+      "impute": "km",
+      "key": "group",
+      "groupby": [
+        "state"
+      ],
+      "value": 0
+    },
+    {
+      "lookup": "state",
+      "from": {
+        "data": {
+          "url": "Data/states.csv",
+          "format": {
+            "type": "csv",
+            "parse": {
+              "population_thousands": "number",
+              "centre_lon": "number",
+              "centre_lat": "number",
+              "label_lon": "number",
+              "label_lat": "number"
+            }
+          }
+        },
+        "key": "state",
+        "fields": [
+          "state_name",
+          "population_thousands"
+        ]
+      }
+    },
+    {
+      "calculate": "datum.km / datum.population_thousands * 100",
+      "as": "km_per_100k"
+    },
+    {
+      "calculate": "datum.group == 'Walking tracks' ? datum.km_per_100k : 0",
+      "as": "walking_value"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "max",
+          "field": "walking_value",
+          "as": "walking_sort"
+        }
+      ],
+      "groupby": [
+        "state"
+      ]
+    }
+  ],
+  "encoding": {
+    "y": {
+      "field": "state",
+      "type": "nominal",
+      "title": null,
+      "sort": {
+        "field": "walking_sort",
+        "op": "max",
+        "order": "descending"
+      },
+      "axis": {
+        "domain": false,
+        "ticks": false,
+        "labelFont": "\"IBM Plex Mono\", monospace"
+      }
+    },
+    "x": {
+      "field": "km_per_100k",
+      "type": "quantitative",
+      "title": "km per 100,000 people",
+      "scale": {
+        "domain": [
+          0,
+          120
+        ]
+      },
+      "axis": {
+        "values": [
+          0,
+          20,
+          40,
+          60,
+          80,
+          100,
+          120
+        ]
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 1.5,
+        "color": "#E1E2DF"
+      },
+      "encoding": {
+        "x": {
+          "aggregate": "min",
+          "field": "km_per_100k"
+        },
+        "x2": {
+          "aggregate": "max",
+          "field": "km_per_100k"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 100,
+        "opacity": 1
+      },
+      "encoding": {
+        "color": {
+          "field": "group",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Walking tracks",
+              "Rail + cycling trails"
+            ],
+            "range": [
+              "#2F6B4F",
+              "#A0522D"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "state_name",
+            "title": "State"
+          },
+          {
+            "field": "group",
+            "title": "Trails"
+          },
+          {
+            "field": "km_per_100k",
+            "title": "km per 100,000",
+            "format": ".1f"
+          },
+          {
+            "field": "km",
+            "title": "Total km",
+            "format": ",.0f"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "state": "NSW",
+            "km_per_100k": 1.2,
+            "label": "1.2 km of rail + cycling trail"
+          }
+        ]
+      },
+      "transform": [],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 4,
+        "dy": 14
+      },
+      "encoding": {
+        "text": {
+          "field": "label"
+        }
+      }
+    }
+  ],
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

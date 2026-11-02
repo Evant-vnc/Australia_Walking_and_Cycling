@@ -1,0 +1,306 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Chart 6 (map 2). Each trail at one approximate point on its route. Circle area = length, colour = type. Click the legend to show one type.",
+  "width": "container",
+  "height": 340,
+  "projection": {
+    "type": "conicEqualArea",
+    "parallels": [
+      -18,
+      -36
+    ],
+    "rotate": [
+      -132,
+      0
+    ]
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "Data/aus_states.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "states"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#ECECE9",
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1
+      }
+    },
+    {
+      "data": {
+        "url": "Data/trails.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "km": "number",
+            "lat": "number",
+            "lon": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "filter": "isValid(datum.lat) && isValid(datum.lon)"
+        }
+      ],
+      "params": [
+        {
+          "name": "type_pick",
+          "select": {
+            "type": "point",
+            "fields": [
+              "type"
+            ]
+          },
+          "bind": "legend"
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "stroke": "#FFFFFF",
+        "strokeWidth": 0.7
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "size": {
+          "field": "km",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              5330
+            ],
+            "range": [
+              0,
+              2400
+            ],
+            "zero": true
+          },
+          "legend": null
+        },
+        "color": {
+          "field": "type",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Walking track",
+              "Rail trail",
+              "Cycling trail",
+              "Multi-use trail",
+              "Mountain-bike park"
+            ],
+            "range": [
+              "#2F6B4F",
+              "#A0522D",
+              "#2E6C93",
+              "#5E6E7A",
+              "#8E3B6E"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "title": null,
+            "columns": 3,
+            "symbolType": "circle",
+            "symbolSize": 120,
+            "labelFontSize": 12
+          }
+        },
+        "opacity": {
+          "condition": {
+            "param": "type_pick",
+            "value": 0.7
+          },
+          "value": 0.06
+        },
+        "order": {
+          "field": "km",
+          "sort": "descending"
+        },
+        "tooltip": [
+          {
+            "field": "name",
+            "title": "Trail"
+          },
+          {
+            "field": "type",
+            "title": "Type"
+          },
+          {
+            "field": "states",
+            "title": "State"
+          },
+          {
+            "field": "km",
+            "title": "Length (km)"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "lon": 114.5,
+            "lat": -40.4,
+            "km": 1000
+          },
+          {
+            "lon": 120.6,
+            "lat": -40.4,
+            "km": 100
+          }
+        ]
+      },
+      "mark": {
+        "type": "circle",
+        "fill": null,
+        "stroke": "#5A6067"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "size": {
+          "field": "km",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              5330
+            ],
+            "range": [
+              0,
+              2400
+            ],
+            "zero": true
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "lon": 114.5,
+            "lat": -44.0,
+            "label": "1,000 km"
+          },
+          {
+            "lon": 120.6,
+            "lat": -44.0,
+            "label": "100 km"
+          },
+          {
+            "lon": 117.4,
+            "lat": -37.4,
+            "label": "Area = length"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "fontSize": 10,
+        "color": "#5A6067"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "lon": 146.3,
+            "lat": -26.2,
+            "label": "Bicentennial 5,330 km →"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "align": "right"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        }
+      }
+    }
+  ],
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

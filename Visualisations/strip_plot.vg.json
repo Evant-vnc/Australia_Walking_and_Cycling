@@ -1,0 +1,238 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Chart 2. Length of every listed trail by type (linear km scale). Gold tick = median.",
+  "width": "container",
+  "height": 230,
+  "data": {
+    "url": "Data/trails.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "km": "number"
+      }
+    }
+  },
+  "encoding": {
+    "y": {
+      "field": "type",
+      "type": "nominal",
+      "sort": [
+        "Walking track",
+        "Rail trail",
+        "Cycling trail",
+        "Multi-use trail",
+        "Mountain-bike park"
+      ],
+      "title": null,
+      "axis": {
+        "domain": false,
+        "ticks": false
+      }
+    },
+    "x": {
+      "field": "km",
+      "type": "quantitative",
+      "title": "Length (km)",
+      "scale": {
+        "domain": [
+          -30,
+          1200
+        ],
+        "nice": false,
+        "zero": false,
+        "clamp": true
+      },
+      "axis": {
+        "values": [
+          0,
+          300,
+          600,
+          900,
+          1200
+        ],
+        "labelExpr": "format(datum.value, ',')",
+        "grid": true
+      }
+    }
+  },
+  "layer": [
+    {
+      "transform": [
+        {
+          "calculate": "(random() - 0.5) * 16",
+          "as": "jitter"
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "size": 38,
+        "opacity": 0.72
+      },
+      "encoding": {
+        "yOffset": {
+          "field": "jitter",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              -20,
+              20
+            ]
+          }
+        },
+        "color": {
+          "field": "type",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Walking track",
+              "Rail trail",
+              "Cycling trail",
+              "Multi-use trail",
+              "Mountain-bike park"
+            ],
+            "range": [
+              "#2F6B4F",
+              "#A0522D",
+              "#2E6C93",
+              "#5E6E7A",
+              "#8E3B6E"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "name",
+            "title": "Trail"
+          },
+          {
+            "field": "type",
+            "title": "Type"
+          },
+          {
+            "field": "states",
+            "title": "State"
+          },
+          {
+            "field": "km",
+            "title": "Length (km)"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "tick",
+        "thickness": 3,
+        "size": 22,
+        "color": "#C98A12"
+      },
+      "encoding": {
+        "x": {
+          "aggregate": "median",
+          "field": "km"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "median",
+              "field": "km",
+              "as": "median_km"
+            }
+          ],
+          "groupby": [
+            "type"
+          ]
+        },
+        {
+          "filter": "datum.type == 'Rail trail' || datum.type == 'Walking track'"
+        },
+        {
+          "calculate": "'median ' + format(datum.median_km, '.0f') + ' km'",
+          "as": "label"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 6,
+        "dy": -13
+      },
+      "encoding": {
+        "x": {
+          "field": "median_km",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "type": "Multi-use trail",
+            "km": 1200,
+            "label": "Bicentennial 5,330 km →"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -10,
+        "dy": -13
+      },
+      "encoding": {
+        "text": {
+          "field": "label"
+        }
+      }
+    }
+  ],
+  "config": {
+    "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "domainColor": "#E1E2DF",
+      "tickColor": "#E1E2DF",
+      "gridColor": "#E1E2DF",
+      "labelFontSize": 11.5,
+      "titleFontSize": 11.5,
+      "titleFontWeight": 500
+    },
+    "axisLeft": {
+      "minExtent": 150,
+      "maxExtent": 150,
+      "labelLimit": 142
+    },
+    "legend": {
+      "labelColor": "#5A6067",
+      "titleColor": "#5A6067",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500
+    },
+    "title": {
+      "font": "\"Source Sans 3\", \"Segoe UI\", sans-serif",
+      "fontSize": 13,
+      "fontWeight": 600,
+      "color": "#1D2125",
+      "anchor": "start"
+    },
+    "text": {
+      "font": "\"IBM Plex Mono\", monospace",
+      "fontSize": 10.5,
+      "color": "#1D2125"
+    }
+  }
+}

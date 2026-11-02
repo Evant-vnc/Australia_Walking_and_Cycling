@@ -1,0 +1,9 @@
+state,state_name,population_thousands,centre_lon,centre_lat,label_lon,label_lat
+NSW,New South Wales,8670.1,146.9,-32.6,146.9,-32.6
+VIC,Victoria,7154.2,144.3,-36.9,143.1,-37.3
+QLD,Queensland,5739.5,144.5,-22.6,144.5,-22.6
+SA,South Australia,1916.8,135.6,-30.0,135.6,-30.0
+WA,Western Australia,3096.2,121.9,-25.8,121.9,-25.8
+TAS,Tasmania,580.7,146.6,-42.0,150.0,-42.9
+NT,Northern Territory,268.9,133.4,-19.5,133.4,-19.5
+ACT,Australian Capital Territory,489.7,151.4,-36.0,153.6,-35.7
